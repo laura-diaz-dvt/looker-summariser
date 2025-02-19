@@ -2,10 +2,10 @@ steps:
   # Docker Build
   - name: 'gcr.io/cloud-builders/docker'
     args: ['build', '-t',
-           'europe-west4-docker.pkg.dev/summariser-tldd/looker-actionhub/actionhubimage',
+           'europe-west1-docker.pkg.dev/summariser-tldd/looker-actionhub/actionhubimage',
            '.']
 
   # Docker Push
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push',
-           'europe-west4-docker.pkg.dev/summariser-tldd/looker-actionhub/actionhubimage']
+           'europe-west1-docker.pkg.dev/summariser-tldd/looker-actionhub/actionhubimage']
