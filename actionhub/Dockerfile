@@ -1,5 +1,7 @@
 FROM node:20.16-alpine
 
+RUN apk add --no-cache git
+
 RUN mkdir -p /code
 WORKDIR /code
 
