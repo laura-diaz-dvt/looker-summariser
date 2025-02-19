@@ -1,5 +1,0 @@
-[tool.ruff]
-line-length = 88
-# Enable Pyflakes ('F'), pycodestyle ('E'), and isort ('I') codes by default
-select = ["E", "F", "I", "RUF", "B", "N"]
-fix = true
