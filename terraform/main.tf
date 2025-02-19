@@ -6,7 +6,7 @@ data "google_project" "project" {}
 
 terraform {
   backend "gcs" {
-    bucket = "summariser-tldd-tf-state"
+    bucket = "bucket-looker-summariser"
   }
 }
 

@@ -1,2 +1,4 @@
-looker_url       = "https://avalonbdt.eu.looker.com"
-action_hub_label = "Louis Action Hub"
+looker_url       = "https://nubalia.cloud.looker.com"
+action_hub_label = "Laura Action Hub"
+proyect          = "laura-diaz-sandbox-01"
+region           = "europe-west1"
