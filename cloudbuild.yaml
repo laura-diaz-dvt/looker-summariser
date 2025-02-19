@@ -1,0 +1,57 @@
+# Variables available:
+#  _PROJECT GCP project
+# _ENV     The environment
+# _TF_ENVS Terraform environment that it should run on
+
+steps:
+  - id: tf-apply-artifact-registry-secrets
+    name: hashicorp/terraform:${_TF_VERSION}
+    entrypoint: "sh"
+    args:
+      - "-c"
+      - |
+        cd terraform
+        echo ""
+        echo "*************** TERRAFORM ******************"
+        echo "*************************************************"
+        terraform init -no-color
+        terraform apply -var-file="auto.tfvars" -target "module.artifact_registry" -target "module.secrets" -no-color -auto-approve -var="project=${PROJECT_ID}" -var="region=${LOCATION}" -var="run_hash=${COMMIT_SHA} || exit 1"
+        cd ..
+  - id: build-push-images
+    name: 'gcr.io/cloud-builders/docker'
+    entrypoint: "sh"
+    args:
+      - "-c"
+      - |
+        cd actionhub
+        docker build -t $LOCATION-docker.pkg.dev/$PROJECT_ID/summariser-repo/actionhub:$COMMIT_SHA . --platform linux/amd64  || exit 1
+        docker push $LOCATION-docker.pkg.dev/$PROJECT_ID/summariser-repo/actionhub:$COMMIT_SHA  || exit 1
+        cd ../function
+        docker build -t $LOCATION-docker.pkg.dev/$PROJECT_ID/summariser-repo/summariser:$COMMIT_SHA . --platform linux/amd64  || exit 1
+        docker push $LOCATION-docker.pkg.dev/$PROJECT_ID/summariser-repo/summariser:$COMMIT_SHA  || exit 1
+        cd ..
+  - id: tf-apply
+    name: hashicorp/terraform:${_TF_VERSION}
+    entrypoint: "sh"
+    args:
+      - "-c"
+      - |
+        cd terraform
+        echo ""
+        echo "*************** TERRAFORM ******************"
+        echo "*************************************************"
+        terraform init -no-color
+        terraform apply -var-file="auto.tfvars" -no-color -auto-approve -var="project=${PROJECT_ID}" -var="region=${LOCATION}" -var="run_hash=${COMMIT_SHA}"  || exit 1
+        cd ..
+  - name: 'gcr.io/cloud-builders/gsutil'
+    entrypoint: 'bash'
+    args:
+    - '-c'
+    - |
+      gsutil rsync -r ./prompts/ gs://gcs-${PROJECT_ID}-prompt-bucket/prompts/
+
+substitutions:
+  _TF_VERSION: 1.3.10
+timeout: 1200s
+options:
+  logging: CLOUD_LOGGING_ONLY
