@@ -8,4 +8,4 @@ steps:
   # Docker Push
   - name: 'gcr.io/cloud-builders/docker'
     args: ['push',
-           'europe-west4-docker.pkg.dev/summariser-tldd/looker-actionhub/actionhubimage']
+           'europe-west4-docker.pkg.dev/summariser-tldd/looker-actionhub/actionhubimage'] 
